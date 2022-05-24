@@ -1,3 +1,6 @@
+#Function takes data set, tech type (GRCh38_Hifi or GRCh38_ILMN), and column
+#Runs a non-parametric t-test comparing the col for the tech type between AFR and non-AFR
+#Writes a csv with ordered p-values for the test
 significanceTest <- function(data, tech, col,csvName) {
   pvals <- list()
   subsets <- list()
