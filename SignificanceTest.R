@@ -7,7 +7,7 @@ significanceTest <- function(data, tech, col,csvName) {
   for (i in 1:length(data$Subset)) {
     pval <- wilcox.test(data[data$Subset==data$Subset[i] & data$Superpopulation=="AFR" & data$tech==tech,col], data[data$Subset==data$Subset[i] & data$Superpopulation!="AFR" & data$tech==tech,col], alternative = "two.sided")$p.value
     pvals[[i]]<- pval
-    subsets[[i]]<- merged$Subset[i]
+    subsets[[i]]<- data$Subset[i]
   }
   pvals.2 <- c(subsets,pvals)
   pvalsArray <- array(unlist(pvals.2),dim=c(length(pvals.2)/2,2,1))
