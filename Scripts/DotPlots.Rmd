@@ -1,3 +1,12 @@
+---
+title: "Dot Plots - ILLUMINA"
+output: html_document
+date: '2022-06-07'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 ```{r}
 library(ggplot2)
@@ -134,3 +143,4 @@ ggplot(I16_PLUS.FP_data, aes(x=Superpopulation,y=log10(I16_PLUS.FP))) +  geom_do
 ```{r}
 ggplot(I16_PLUS.Recall_data, aes(x=Superpopulation,y=log10(I16_PLUS.Recall))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
 ```
+
