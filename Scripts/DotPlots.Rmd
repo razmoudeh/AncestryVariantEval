@@ -1,0 +1,136 @@
+
+```{r}
+library(ggplot2)
+t <- read.table("defrabb-HPRC44_combined-happy-extended_2022-02-28_remdups.tsv",header=TRUE)
+t$tech=substr(t$source,1,11)
+t$Sample=substr(t$source,16,22)
+t2 <- read.table("hprc_year1_assemblies_v2_sample_metadata.csv",sep=",",header=TRUE)
+merged <- merge(t,t2)
+
+tab <- read.table("allpVals_ILLUMINA.csv",sep=",",header=TRUE)
+tab.2 <- as.data.frame(tab)
+
+```
+
+```{r}
+#First creates a vector with significant subsets for each column 
+#Takes that sig vector - creates a new data set with just these - returns
+#pValData = pVal csv file
+#Data = raw data
+#Num = number of facets 
+#colTab = col in pVal csv 
+#colDf = col with subset
+orderTab <- function(pValData,data,num,colTAB,colDf) {
+  df<- pValData[order(pValData[,colTAB]),]
+  SigSub <- df[1:num,colDf]
+  return(subset(data, Subset %in% SigSub))
+}
+
+INDEL.Frac_NA_data <- orderTab(tab.2,merged,5,3,2)
+INDEL.Recall_data <- orderTab(tab.2,merged,5,4,2)
+INDEL.FP.gt_data <- orderTab(tab.2,merged,5,5,2)
+INDEL.FP.al_data <- orderTab(tab.2,merged,5,6,2)
+INDEL.QUERY.FP.het_data <- orderTab(tab.2,merged,5,7,2)
+INDEL.QUERY.FP.homalt_data <- orderTab(tab.2,merged,5,8,2)
+INDEL.QUERY.FP_data <- orderTab(tab.2,merged,5,9,2)
+
+SNP.Recall_data <- orderTab(tab.2,merged,5,10,2)
+SNP.Frac_NA_data <- orderTab(tab.2,merged,5,11,2)
+SNP.FP.gt_data <- orderTab(tab.2,merged,5,12,2)
+SNP.FP.al_data <- orderTab(tab.2,merged,5,13,2)
+SNP.QUERY.FP.het_data <- orderTab(tab.2,merged,5,14,2)
+SNP.QUERY.FP.homalt_data <- orderTab(tab.2,merged,5,15,2)
+SNP.QUERY.FP_data <- orderTab(tab.2,merged,5,16,2)
+
+D16_PLUS.FP_data <- orderTab(tab.2,merged,5,17,2)
+D16_PLUS.Recall_data <- orderTab(tab.2,merged,5,18,2)
+I16_PLUS.FP_data <- orderTab(tab.2,merged,5,19,2)
+I16_PLUS.Recall_data <- orderTab(tab.2,merged,5,20,2)
+
+#https://stackoverflow.com/questions/17607074/r-how-can-i-get-a-lengthy-label-to-fit-using-facet-grid-in-ggplot2
+#Splits on _ (label_wrap_gen not working because _ used to sep)
+label_wrap_gen3 <- function(width = 100) {
+  function(variable, value) {
+    inter <- lapply(strwrap(as.character(value), width=width, simplify=FALSE), 
+           paste, collapse="\n")
+    inter <- gsub(paste0("(.{",width,"})"), "\\1\n",inter)
+  }
+}
+
+```
+
+```{r}
+ggplot(INDEL.Frac_NA_data, aes(x=Superpopulation,y=log10(INDEL.Frac_NA))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(INDEL.Recall_data, aes(x=Superpopulation,y=log10(INDEL.Recall))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex))) + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(INDEL.FP.gt_data, aes(x=Superpopulation,y=log10(INDEL.FP.gt))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(INDEL.FP.al_data, aes(x=Superpopulation,y=log10(INDEL.FP.al))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(INDEL.QUERY.FP.het_data, aes(x=Superpopulation,y=log10(INDEL.QUERY.FP.het))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(INDEL.QUERY.FP.homalt_data, aes(x=Superpopulation,y=log10(INDEL.QUERY.FP.homalt))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(INDEL.QUERY.FP_data, aes(x=Superpopulation,y=log10(INDEL.QUERY.FP))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+
+
+```{r}
+ggplot(SNP.Frac_NA_data, aes(x=Superpopulation,y=log10(SNP.Frac_NA))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(SNP.Recall_data, aes(x=Superpopulation,y=log10(SNP.Recall))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(SNP.FP.gt_data, aes(x=Superpopulation,y=log10(INDEL.FP.gt))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(SNP.FP.al_data, aes(x=Superpopulation,y=log10(SNP.FP.al))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(SNP.QUERY.FP.het_data, aes(x=Superpopulation,y=log10(SNP.QUERY.FP.het))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(SNP.QUERY.FP.homalt_data, aes(x=Superpopulation,y=log10(SNP.QUERY.FP.homalt))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(SNP.QUERY.FP_data, aes(x=Superpopulation,y=log10(SNP.QUERY.FP))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+
+
+```{r}
+ggplot(D16_PLUS.FP_data, aes(x=Superpopulation,y=log10(D16_PLUS.FP))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(D16_PLUS.Recall_data, aes(x=Superpopulation,y=log10(D16_PLUS.Recall))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(I16_PLUS.FP_data, aes(x=Superpopulation,y=log10(I16_PLUS.FP))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
+
+```{r}
+ggplot(I16_PLUS.Recall_data, aes(x=Superpopulation,y=log10(I16_PLUS.Recall))) +  geom_dotplot(binaxis='y', stackdir='center',stackratio=1.5, dotsize=1.2,aes(colour = factor(Sex)))   + facet_grid( Subset ~ tech, scales = "free_y",labeller=label_wrap_gen3(width=11))
+```
